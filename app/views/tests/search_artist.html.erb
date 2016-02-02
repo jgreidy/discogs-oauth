@@ -1,0 +1,10 @@
+<p>Artist search</p>
+<p>Count: <%= @search.pagination.items %></p>
+<% for @item in @search.results %>
+    <p><%= @item.id %> : <%= @item.title %></p>
+<% end %>
+
+<% for @release in @artist_releases %>
+    <img src="<%= @release[:thumb] %>">
+    <%= debug(@release) %>
+<% end %>

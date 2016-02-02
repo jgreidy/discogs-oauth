@@ -12,6 +12,7 @@ DiscogsOauth::Application.routes.draw do
       get :add_want
       get :edit_want
       get :remove_want
+      get :search_artist
     end
   end
 

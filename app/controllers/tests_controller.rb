@@ -1,7 +1,7 @@
 class TestsController < ApplicationController
 
   before_filter do
-    @discogs = Discogs::Wrapper.new("Test OAuth", session[:access_token])
+    @discogs = Discogs::Wrapper.new("NameTakes", session[:access_token])
   end
 
   def index
@@ -64,6 +64,54 @@ class TestsController < ApplicationController
 
     @user     = @discogs.get_identity
     @response = @discogs.delete_release_from_user_wantlist(@user.username, release_id)
+  end
+
+  def search_artist
+    artist = "adolph hofner"
+    id = "307420"
+
+    # auth_wrapper = Discogs::Wrapper.new("NameTakes", access_token: session[:access_token])
+    @search = @discogs.search(artist, :per_page => 10, :type => :artist)
+
+    @artist_releases = Array.new
+    for @item in @search.results
+      id = @item.id;
+      release_artist = @item.title
+      releases = @discogs.get_artist_releases(id)
+
+      if releases.pagination.items > 0
+        for release in releases.releases
+          if release.type == "release"
+            cuts = {
+              :id => release.id,
+              :title => release.title,
+              :role => release.role,
+              :format => release.format,
+              :thumb => release.thumb,
+              :artist => release.artist,
+              :release_artist => release_artist,
+              :artist_id => id
+            }
+            @artist_releases << cuts
+          end
+        end
+      end
+
+      # releases = @discogs.search(release_artist, :per_page => 10, :type => :release, :format => "78 RPM")
+
+      # for release in releases.results
+      #   cuts = {
+      #     :id => release.id,
+      #     :title => release.title,
+      #     :artist => release_artist,
+      #     :artist_id => id,
+      #     :release => release
+      #   }
+      #   @artist_releases << cuts
+      # end
+
+    end
+
   end
 
 end
